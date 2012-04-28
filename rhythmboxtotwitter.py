@@ -3,7 +3,7 @@ from urllib2 import urlopen,Request,build_opener,HTTPCookieProcessor,install_ope
 from urllib import urlencode
 from cookielib import LWPCookieJar
 from HTMLParser import HTMLParser
-import dbus, gobject, dbus.glib
+import dbus, gobject, dbus.glib, os
 
 class RhythmBoxToTwitter(HTMLParser):
     
@@ -75,11 +75,14 @@ class RhythmBoxToTwitter(HTMLParser):
         )
     
         twitter.updateStatus(status = msg)
-    
+        os.remove('cookie.jar')
+        self.tokens = {}
+        self.cnt = 0
+
     def listening_to(self,*args, **kwargs):
         mydict = self.rhythmshell.getSongProperties(self.rhythm.getPlayingUri())
-        self.postMessage("Listening To: " + mydict['artist-folded'] + " - " + mydict['title'])
-        print "Listening To: " + mydict['artist-folded'] + " - " + mydict['title']
+        self.postMessage("Listening To: " + mydict['artist-folded'] + " - " + mydict['title'] + " - http://bit.ly/If4RXN")
+        print "Listening To: " + mydict['artist-folded'] + " - " + mydict['title'] + " - http://bit.ly/If4RXN"
 
     
     def run(self):
@@ -91,3 +94,10 @@ class RhythmBoxToTwitter(HTMLParser):
         self.bus.add_signal_receiver(self.listening_to,dbus_interface="org.gnome.Rhythmbox.Player",signal_name="playingChanged")
         loop = gobject.MainLoop()
         loop.run()
+
+if __name__ == "__main__":
+	try:
+		rbox = RhythmBoxToTwitter("HGEEIDCqgsIjkdp8RdaDAA", "ILbpuyjhMtUVb1wWz1gD4QDPdWvA1Lro3NDb1ElicCY", "Twitterusername", "Twitterpassword")
+		rbox.run()
+	except KeyboardInterrupt:
+		print "\nApplication exits..."

@@ -6,20 +6,15 @@ from HTMLParser import HTMLParser
 import dbus, gobject, dbus.glib, os
 
 class RhythmBoxToTwitter(HTMLParser):
-    
-    tokens = {}
-    cnt = 0
-    consumerKey = ""
-    consumerSecret = ""
-    twitterUsername = ""
-    twitterPassword = ""
-    
+
     def __init__(self,consumerKey,consumerSecret,twitterUsername,twitterPassword):
         HTMLParser.__init__(self)
         self.consumerKey = consumerKey
         self.consumerSecret = consumerSecret
         self.twitterPassword = twitterPassword
-        self.twitterUsername = twitterUsername    
+        self.twitterUsername = twitterUsername
+        self.tokens = {}
+        self.cnt = 0
     
     def handle_starttag(self, tag, attrs):
         if tag == 'input':
@@ -35,8 +30,6 @@ class RhythmBoxToTwitter(HTMLParser):
         twitter = Twython(twitter_token = self.consumerKey,twitter_secret = self.consumerSecret)
         auth_props = twitter.get_authentication_tokens()
     
-        #print auth_props['auth_url']
-    
         cookie = 'cookie.jar'
         cookieJar = LWPCookieJar()
         opener = build_opener(HTTPCookieProcessor(cookieJar))
@@ -44,7 +37,6 @@ class RhythmBoxToTwitter(HTMLParser):
     
         f = urlopen(auth_props['auth_url'])
         cookieJar.save(cookie)
-        #print f.read().decode('utf-8','replace')
         self.feed(f.read().decode('utf-8','replace'))
         self.close()
         f.close()
@@ -55,7 +47,6 @@ class RhythmBoxToTwitter(HTMLParser):
     
         cookieJar.load(cookie)
         f = urlopen("https://twitter.com/oauth/authenticate",data)
-        #print f.read().decode('utf-8','replace')
         f.close()
     
         twitter = Twython(
@@ -81,10 +72,10 @@ class RhythmBoxToTwitter(HTMLParser):
 
     def listening_to(self,*args, **kwargs):
         mydict = self.rhythmshell.getSongProperties(self.rhythm.getPlayingUri())
-        self.postMessage("Listening To: " + mydict['artist-folded'] + " - " + mydict['title'] + " - http://bit.ly/If4RXN")
-        print "Listening To: " + mydict['artist-folded'] + " - " + mydict['title'] + " - http://bit.ly/If4RXN"
-
-    
+        ret = "Listening To: %s - %s - http://bit.ly/If4RXN" % (mydict['artist-folded'], mydict['title'])
+        self.postMessage(ret)
+        print ret
+        
     def run(self):
         self.bus = dbus.SessionBus()
         self.rhythm_obj = self.bus.get_object("org.gnome.Rhythmbox", "/org/gnome/Rhythmbox/Player")

@@ -72,7 +72,7 @@ class RhythmBoxToTwitter(HTMLParser):
 
     def listening_to(self,*args, **kwargs):
         mydict = self.rhythmshell.getSongProperties(self.rhythm.getPlayingUri())
-        ret = "Listening To: %s - %s - http://bit.ly/If4RXN" % (mydict['artist-folded'], mydict['title'])
+        ret = "Listening To: %s - %s - http://bit.ly/If4RXN" % (mydict['artist'], mydict['title'])
         self.postMessage(ret)
         print ret
         

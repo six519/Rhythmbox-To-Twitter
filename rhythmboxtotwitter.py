@@ -88,6 +88,7 @@ class RhythmBoxToTwitter(HTMLParser):
 
 if __name__ == "__main__":
 	try:
+		#TODO: add username,password checker
 		twitterUsername = raw_input('Enter Twitter Username: ').strip()
 		twitterPassword = raw_input('Enter Twitter Password: ').strip()
 		rbox = RhythmBoxToTwitter("HGEEIDCqgsIjkdp8RdaDAA", "ILbpuyjhMtUVb1wWz1gD4QDPdWvA1Lro3NDb1ElicCY", twitterUsername, twitterPassword)

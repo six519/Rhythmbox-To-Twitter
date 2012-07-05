@@ -13,6 +13,7 @@ class RhythmBoxToTwitter(HTMLParser):
         self.consumerSecret = consumerSecret
         self.twitterPassword = twitterPassword
         self.twitterUsername = twitterUsername
+        self.jarName = 'cookie.jar'
         self.tokens = {}
         self.cnt = 0
     
@@ -30,7 +31,7 @@ class RhythmBoxToTwitter(HTMLParser):
         twitter = Twython(twitter_token = self.consumerKey,twitter_secret = self.consumerSecret)
         auth_props = twitter.get_authentication_tokens()
     
-        cookie = 'cookie.jar'
+        cookie = self.jarName
         cookieJar = LWPCookieJar()
         opener = build_opener(HTTPCookieProcessor(cookieJar))
         install_opener(opener)
@@ -66,7 +67,7 @@ class RhythmBoxToTwitter(HTMLParser):
         )
     
         twitter.updateStatus(status = msg)
-        os.remove('cookie.jar')
+        self.deleteJar()
         self.tokens = {}
         self.cnt = 0
 
@@ -85,6 +86,12 @@ class RhythmBoxToTwitter(HTMLParser):
         self.bus.add_signal_receiver(self.listening_to,dbus_interface="org.gnome.Rhythmbox.Player",signal_name="playingChanged")
         loop = gobject.MainLoop()
         loop.run()
+    
+    def deleteJar(self):
+		try:
+			os.remove(self.jarName)
+		except OSError:
+			pass
 
 if __name__ == "__main__":
 	try:

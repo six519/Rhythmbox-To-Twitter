@@ -1,3 +1,11 @@
+"""
+*************************************************************************************
+* @author: Ferdinand E. Silva
+* @email: ferdinandsilva@ferdinandsilva.com
+* @title: Rhythmbox To Twitter
+* @description: Post the title of currently playing song of Rhythm Box to Twitter
+*************************************************************************************
+"""
 from twython import Twython
 from urllib2 import urlopen,Request,build_opener,HTTPCookieProcessor,install_opener
 from urllib import urlencode

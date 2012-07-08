@@ -1,0 +1,2 @@
+class InvalidTwitterAccountException(Exception):
+	pass

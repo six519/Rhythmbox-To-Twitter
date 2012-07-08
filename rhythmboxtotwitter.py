@@ -4,9 +4,7 @@ from urllib import urlencode
 from cookielib import LWPCookieJar
 from HTMLParser import HTMLParser
 import dbus, gobject, dbus.glib, os
-
-class InvalidTwitterAccountException(Exception):
-	pass
+from twitter_exceptions import InvalidTwitterAccountException
 
 class RhythmBoxToTwitter(HTMLParser):
 	

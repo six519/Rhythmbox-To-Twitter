@@ -33,7 +33,7 @@ class RhythmBoxToTwitter(HTMLParser):
 		try:
 			testString = msg % ("test","test")
 			self.__customMessage = msg
-		except TypeError:
+		except (TypeError, ValueError):
 			raise InvalidCustomMessageException("Invalid Custom Message")
 				
 	def postMessage(self,msg):
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 		twitterPassword = raw_input('Enter Twitter Password: ').strip()
 		rbox = RhythmBoxToTwitter("HGEEIDCqgsIjkdp8RdaDAA", "ILbpuyjhMtUVb1wWz1gD4QDPdWvA1Lro3NDb1ElicCY", twitterUsername, twitterPassword)
 		#	Below (Set custom message)	
-		#rbox.setCustomMessage("Artist %s and Title %s")
+		#rbox.setCustomMessage("Artist % and Title %s")
 		rbox.run()
 	except KeyboardInterrupt:
 		print "\nApplication exits..."

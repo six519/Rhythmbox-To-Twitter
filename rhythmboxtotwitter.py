@@ -4,7 +4,7 @@ from urllib import urlencode
 from cookielib import LWPCookieJar
 from HTMLParser import HTMLParser
 import dbus, gobject, dbus.glib, os
-from twitter_exceptions import InvalidTwitterAccountException
+from twitter_exceptions import InvalidTwitterAccountException, InvalidCustomMessageException
 
 class RhythmBoxToTwitter(HTMLParser):
 	
@@ -18,6 +18,7 @@ class RhythmBoxToTwitter(HTMLParser):
 		self.tokens = {}
 		self.cnt = 0
 		self.twitter = None
+		self.__customMessage = None
 
 	def handle_starttag(self, tag, attrs):
 		if tag == 'input':
@@ -28,13 +29,25 @@ class RhythmBoxToTwitter(HTMLParser):
 				self.tokens['oauth_token'] = attrs[3][1]
 				self.cnt += 1
 				
+	def setCustomMessage(self, msg):
+		try:
+			testString = msg % ("test","test")
+			self.__customMessage = msg
+		except TypeError:
+			raise InvalidCustomMessageException("Invalid Custom Message")
+				
 	def postMessage(self,msg):
 		self.setTwitter()
 		self.twitter.updateStatus(status = msg)
 		
 	def listening_to(self,*args, **kwargs):
-		mydict = self.rhythmshell.getSongProperties(self.rhythm.getPlayingUri())
-		ret = "Listening To: %s - %s - http://bit.ly/If4RXN" % (mydict['artist'], mydict['title'])
+		mydict = self.rhythmshell.getSongProperties(self.rhythm.getPlayingUri())		
+
+		if self.__customMessage:
+			ret = self.__customMessage % (mydict['artist'], mydict['title'])
+		else:
+			ret = "Listening To: %s - %s - http://bit.ly/If4RXN" % (mydict['artist'], mydict['title'])
+		
 		self.postMessage(ret)
 		print ret
 		
@@ -108,17 +121,20 @@ class RhythmBoxToTwitter(HTMLParser):
 		self.deleteJar()
 		self.tokens = {}
 		self.cnt = 0
-		#self.twitter = None
 
 if __name__ == "__main__":
 	try:
-		#TODO: add username,password checker
 		twitterUsername = raw_input('Enter Twitter Username: ').strip()
 		twitterPassword = raw_input('Enter Twitter Password: ').strip()
 		rbox = RhythmBoxToTwitter("HGEEIDCqgsIjkdp8RdaDAA", "ILbpuyjhMtUVb1wWz1gD4QDPdWvA1Lro3NDb1ElicCY", twitterUsername, twitterPassword)
+		#	Below (Set custom message)	
+		#rbox.setCustomMessage("Artist %s and Title %s")
 		rbox.run()
 	except KeyboardInterrupt:
 		print "\nApplication exits..."
 	except InvalidTwitterAccountException:
 		print "\nInvalid Twitter Account"
+		print "\nApplication exits..."
+	except InvalidCustomMessageException:
+		print "\nInvalid Custom Message"
 		print "\nApplication exits..."

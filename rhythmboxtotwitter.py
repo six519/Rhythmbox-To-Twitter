@@ -42,12 +42,7 @@ class RhythmBoxToTwitter(HTMLParser):
 		
 	def listening_to(self,*args, **kwargs):
 		mydict = self.rhythmshell.getSongProperties(self.rhythm.getPlayingUri())		
-
-		if self.__customMessage:
-			ret = self.__customMessage % (mydict['artist'], mydict['title'])
-		else:
-			ret = "Listening To: %s - %s - http://bit.ly/If4RXN" % (mydict['artist'], mydict['title'])
-		
+		ret = self.__customMessage % (mydict['artist'], mydict['title']) if self.__customMessage else "Listening To: %s - %s - http://bit.ly/If4RXN" % (mydict['artist'], mydict['title'])
 		self.postMessage(ret)
 		print ret
 		
@@ -128,7 +123,7 @@ if __name__ == "__main__":
 		twitterPassword = raw_input('Enter Twitter Password: ').strip()
 		rbox = RhythmBoxToTwitter("HGEEIDCqgsIjkdp8RdaDAA", "ILbpuyjhMtUVb1wWz1gD4QDPdWvA1Lro3NDb1ElicCY", twitterUsername, twitterPassword)
 		#	Below (Set custom message)	
-		#rbox.setCustomMessage("Artist % and Title %s")
+		#rbox.setCustomMessage("Artist %s and Title %s")
 		rbox.run()
 	except KeyboardInterrupt:
 		print "\nApplication exits..."

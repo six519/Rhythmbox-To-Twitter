@@ -14,6 +14,7 @@ from cookielib import LWPCookieJar
 from HTMLParser import HTMLParser
 import dbus, gobject, dbus.glib, os
 from twitter_exceptions import InvalidTwitterAccountException, InvalidCustomMessageException
+from getpass import getpass
 
 class RhythmBoxToTwitter(HTMLParser):
 	
@@ -129,7 +130,7 @@ class RhythmBoxToTwitter(HTMLParser):
 if __name__ == "__main__":
 	try:
 		twitterUsername = raw_input('Enter Twitter Username: ').strip()
-		twitterPassword = raw_input('Enter Twitter Password: ').strip()
+		twitterPassword = getpass('Enter Twitter Password: ').strip()
 		rbox = RhythmBoxToTwitter("HGEEIDCqgsIjkdp8RdaDAA", "ILbpuyjhMtUVb1wWz1gD4QDPdWvA1Lro3NDb1ElicCY", twitterUsername, twitterPassword)
 		#	Below (Set custom message)	
 		#rbox.setCustomMessage("Artist %s and Title %s")
